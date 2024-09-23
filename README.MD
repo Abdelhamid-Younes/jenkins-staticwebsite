@@ -38,7 +38,7 @@ Install the following Jenkins plugins:
 3. **Test Image**: Runs a simple test using `curl` to check the app's response.
 4. **Clean Container**: Stops and removes the container after testing.
 5. **Push to DockerHub**: Pushes the Docker image to DockerHub (only on the master branch).
-6. **Deploy to Staging**: Deploys the app to the staging environment using a `POST` request.
+6. **Deploy to Staging**: Deploys the app to the staging environment using a `POST` request, via eazylabs API developped by eazytraining.
 7. **Deploy to Production**: Deploys to production (only on the master branch).
 
 ## Usage
