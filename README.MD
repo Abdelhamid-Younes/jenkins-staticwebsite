@@ -30,3 +30,17 @@ Install the following Jenkins plugins:
 ### GitHub Setup:
 1. Create a GitHub repository to host your application's code.
 2. Set up a GitHub **Webhook** pointing to your Jenkins server, allowing automated builds to be triggered by push events to the repository.
+
+## Pipeline Stages
+
+1. **Build Image**: Builds the Docker image from the repository using the `Dockerfile`.
+2. **Run Container**: Starts the container with the built image, cleaning any previous containers.
+3. **Test Image**: Runs a simple test using `curl` to check the app's response.
+4. **Clean Container**: Stops and removes the container after testing.
+5. **Push to DockerHub**: Pushes the Docker image to DockerHub (only on the master branch).
+6. **Deploy to Staging**: Deploys the app to the staging environment using a `POST` request.
+7. **Deploy to Production**: Deploys to production (only on the master branch).
+
+## Usage
+
+- **Triggering the Pipeline**: Automatically triggered by GitHub webhook on push events.
