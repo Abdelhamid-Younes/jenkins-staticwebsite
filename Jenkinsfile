@@ -54,6 +54,7 @@ pipeline {
                     '''
                 }
             }
+        }
         stage('Clean container') {
             agent any
             steps{
