@@ -1,4 +1,4 @@
-# Jenkins Pipeline for staticwebsite Application
+# Jenkins Pipeline for staticwebsite application
 This Jenkins pipeline builds, tests, and deploys a Dockerized application. It uses a multistage process to automate building a Docker image, running tests, and deploying the app to staging and production environments.
 
 ## Prerequisites
