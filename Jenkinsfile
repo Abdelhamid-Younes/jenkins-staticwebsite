@@ -40,7 +40,7 @@ pipeline {
                         echo "Cleaning existing container if exists"
                         docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
                         docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT -e PORT=$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-                        sleep 5
+                        sleep 10
                     '''
                 }
             }
