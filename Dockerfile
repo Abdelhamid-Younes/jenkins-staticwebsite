@@ -7,7 +7,7 @@ RUN apk add --no-cache git && \
     git clone https://github.com/diranetafen/static-website-example.git /opt/files/
 
 # Second stage: use a slim Nginx base image
-FROM nginx:1.21.1 AS webserver
+FROM nginx:stable-alpine AS webserver
 LABEL maintainer='Abdelhamid YOUNES'
 
 # Copy files from the previous stage
