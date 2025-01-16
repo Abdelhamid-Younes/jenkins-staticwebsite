@@ -52,7 +52,9 @@ pipeline {
                     /*sh '''    
                         curl http://192.168.99.20:$APP_EXPOSED_PORT | grep -i "Dimension"
                     '''*/
+
                     sh 'whoami'
+                    sh 'ping -c 4 192.168.99.20'
                     sh 'curl http://192.168.99.20:80 | grep -i "dimension"'
 
                 }
