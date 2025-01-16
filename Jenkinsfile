@@ -39,8 +39,7 @@ pipeline {
                     sh '''
                         echo "Cleaning existing container if exists"
                         docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
-                        #docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-                        docker run -d -p 80:80 younesabdh/staticwebsite
+                        docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
                         sleep 10
                     '''
                 }
@@ -51,8 +50,7 @@ pipeline {
             steps{
                 script {
                     sh '''
-                        curl http://172.17.0.2:80 | grep -i "Dimension"
-                        #curl http://172.17.0.2:$APP_EXPOSED_PORT | grep -i "Dimension"
+                        curl http://172.17.0.2:$APP_EXPOSED_PORT | grep -i "Dimension"
                     '''
                 }
             }
