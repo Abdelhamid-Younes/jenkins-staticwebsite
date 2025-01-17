@@ -32,30 +32,21 @@ pipeline {
                 }
             }
         }
-        // stage('Run container based on built image'){
-        //     agent any
-        //     steps {
-        //         // script{
-        //         //     sh '''
-        //         //         echo "Cleaning existing container if exists"
-        //         //         docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
-        //         //         docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-        //         //     '''
-        //         // }
-        //     }
-        // }
+        stage('Run container based on built image'){
+            agent any
+            steps {
+                script{
+                    sh '''
+                        echo "Cleaning existing container if exists"
+                        docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
+                        docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
         stage('Test image') {
             agent any
             steps{
-                // script {
-                //     sh '''
-                //         docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
-                //         docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-                //         sleep 5    
-                //         curl -k http://172.17.0.2:$APP_EXPOSED_PORT | grep -i "Dimension"
-                //     '''
-                // }
-
                 script {
                     sh 'docker stop ${IMAGE_NAME} || true && docker rm ${IMAGE_NAME} || true'   // // Stop and remove any previous container.
                     sh 'docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG'
