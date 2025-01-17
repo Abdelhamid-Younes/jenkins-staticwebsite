@@ -14,7 +14,7 @@ LABEL maintainer='Abdelhamid YOUNES'
 COPY --from=files /opt/files/ /usr/share/nginx/html/
 
 # Expose port 80
-EXPOSE 80
+#EXPOSE 80
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
