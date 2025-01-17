@@ -11,14 +11,14 @@ pipeline {
         PRODUCTION = "${PARAM_APP_NAME}-prod"
         DOCKERHUB_USR = "${PARAM_DOCKERHUB_ID}"
         DOCKERHUB_PSW = credentials('dockerhub')
-        APP_EXPOSED_PORT = "${PARAM_PORT_EXPOSED}"            /*80 by default*/
+        APP_EXPOSED_PORT = "${PARAM_PORT_EXPOSED}"            /*8000 by default*/
 
         STG_API_ENDPOINT = "ip10-0-4-5-cu3br76l795g00aqlch0-1993.direct.docker.labs.eazytraining.fr"
         STG_APP_ENDPOINT = "ip10-0-4-5-cu3br76l795g00aqlch0-80.direct.docker.labs.eazytraining.fr"
         PROD_API_ENDPOINT = "ip10-0-4-4-cu3br76l795g00aqlch0-1993.direct.docker.labs.eazytraining.fr"
         PROD_APP_ENDPOINT = "ip10-0-4-4-cu3br76l795g00aqlch0-80.direct.docker.labs.eazytraining.fr"
         
-        INTERNAL_PORT = "${PARAM_INTERNAL_PORT}"              /*5000 ny default*/
+        INTERNAL_PORT = "${PARAM_INTERNAL_PORT}"              /*8000 ny default*/
         EXTERNAL_PORT = "${PARAM_PORT_EXPOSED}"
         CONTAINER_IMAGE = "${DOCKERHUB_USR}/${IMAGE_NAME}:${IMAGE_TAG}"
     }
@@ -51,8 +51,8 @@ pipeline {
                     sh '''
                         docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
                         docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-                        sleep 10    
-                        curl http://172.17.0.2:$APP_EXPOSED_PORT | grep -i "Dimension"
+                        sleep 5    
+                        curl -k http://172.17.0.2:$APP_EXPOSED_PORT | grep -i "Dimension"
                     '''
                 }
             }
