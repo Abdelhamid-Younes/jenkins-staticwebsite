@@ -49,7 +49,7 @@ pipeline {
             steps{
                 script {
                     sh 'sleep 5'
-                    sh 'curl -k http://172.17.0.1:$APP_EXPOSED_PORT | grep -i "Dimension"'
+                    sh 'curl -k http://172.17.0.3:$APP_EXPOSED_PORT | grep -i "Dimension"'
                     sh 'if [ $? -eq 0 ]; then echo "Acceptance test succeeded"; fi'  // // Verify the test
                 }
             }
