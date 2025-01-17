@@ -54,8 +54,8 @@ pipeline {
                     '''*/
 
                     sh 'whoami'
-                    sh 'ping -c 4 192.168.99.20'
-                    sh 'curl http://192.168.99.20:80 | grep -i "dimension"'
+                    sh 'ping -c 4 172.17.0.2'
+                    sh 'curl http://172.17.0.2:80 | grep -i "dimension"'
 
                 }
             }
