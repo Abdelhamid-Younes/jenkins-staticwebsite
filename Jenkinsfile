@@ -49,13 +49,9 @@ pipeline {
             agent any
             steps{
                 script {
-                    /*sh '''    
+                    sh '''    
                         curl http://192.168.99.20:$APP_EXPOSED_PORT | grep -i "Dimension"
-                    '''*/
-
-                    sh 'whoami'
-                    sh 'curl http://172.17.0.2:80 | grep -i "dimension"'
-
+                    '''
                 }
             }
         }
