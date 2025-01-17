@@ -40,7 +40,6 @@ pipeline {
                         echo "Cleaning existing container if exists"
                         docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
                         docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-                        sleep 10
                     '''
                 }
             }
@@ -49,8 +48,11 @@ pipeline {
             agent any
             steps{
                 script {
-                    sh '''    
-                        curl http://192.168.99.20:$APP_EXPOSED_PORT | grep -i "Dimension"
+                    sh '''
+                        docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
+                        docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
+                        sleep 10    
+                        curl http://172.17.0.1:$APP_EXPOSED_PORT | grep -i "Dimension"
                     '''
                 }
             }
