@@ -48,10 +48,8 @@ pipeline {
             agent any
             steps{
                 script {
-                    sh 'docker stop ${IMAGE_NAME} || true && docker rm ${IMAGE_NAME} || true'   // // Stop and remove any previous container.
-                    sh 'docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG'
                     sh 'sleep 5'
-                    sh 'curl -k http://172.17.0.2:$APP_EXPOSED_PORT | grep -i "Dimension"'
+                    sh 'curl -k http://172.17.0.1:$APP_EXPOSED_PORT | grep -i "Dimension"'
                     sh 'if [ $? -eq 0 ]; then echo "Acceptance test succeeded"; fi'  // // Verify the test
                 }
             }
