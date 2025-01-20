@@ -136,29 +136,42 @@ pipeline {
         //     }
         // }
 
-        stage('STAGING - Deploy on EC2') {
+        // stage('Deploy STAGING on AWS EC2') {
+        //     steps {
+        //         script {
+        //             sshagent(credentials: ['private_key']) {
+        //                 sh '''
+        //                     echo "Connecting to the staging EC2 instance"
+        //                     echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
+                            
+        //                     ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "
+        //                         docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
+        //                         docker stop $IMAGE_NAME || true
+        //                         docker rm $IMAGE_NAME || true
+        //                         sleep 15
+        //                         docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
+        //                     "
+                            
+        //                     curl http://$STAGING_IP:$EXTERNAL_PORT | grep -i "Dimension"
+        //                 '''
+        //             }
+        //         }
+
+        //     }
+        // }
+
+        stage('Deploy PROD on AWS EC2') {
             steps {
                 script {
+                    // Prompt for confirmation before deploying on PROD environment.
+                    input message: "Do you confirm Deploying on AWS PROD environment ?", ok: 'Yes'
+                    
                     sshagent(credentials: ['private_key']) {
-                        // sh '''
-                        //     echo "Connecting to the staging EC2 instance"
-                        //     echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
-                        //     ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG"
-                            
-                        //     ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker stop $IMAGE_NAME || true"
-                        //     ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker rm $IMAGE_NAME || true"                            
-                        //     sleep 15
-
-                        //     ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT  ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG"
-
-                        //     curl http://$STAGING_IP:$EXTERNAL_PORT | grep -i "Dimension"
-                        // '''
-
                         sh '''
                             echo "Connecting to the staging EC2 instance"
                             echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
                             
-                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$PROD_IP "
                                 docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
                                 docker stop $IMAGE_NAME || true
                                 docker rm $IMAGE_NAME || true
@@ -166,15 +179,13 @@ pipeline {
                                 docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
                             "
                             
-                            curl http://$STAGING_IP:$EXTERNAL_PORT | grep -i "Dimension"
+                            curl http://$PROD_IP:$EXTERNAL_PORT | grep -i "Dimension"
                         '''
                     }
                 }
 
             }
         }
-
-
 
     }
   post {
