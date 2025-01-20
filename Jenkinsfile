@@ -142,19 +142,19 @@ pipeline {
                     sshagent(credentials: ['private_key']) {
                         sh '''
                             echo "Connecting to the staging EC2 instance"
-                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "
+                            echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
 
-                                # Pull the Docker image and run the container
-                                echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
-                                docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
-                                docker stop $IMAGE_NAME || echo 'No container in running'
-                                docker rm $IMAGE_NAME || echo 'All containers are deleted'
-                                sleep 30
+                            # Pull the Docker image and run the container
+                            
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker stop $IMAGE_NAME || echo 'No container is running'"
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker rm $IMAGE_NAME || echo 'All containers are deleted'"
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG"
+                            sleep 30
 
-                                docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-                                #docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
-                                sleep 20
-                                "
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG"
+                            #docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
+                            sleep 10
+                                
                             curl -I http://$STAGING_IP
                         '''
                     }
