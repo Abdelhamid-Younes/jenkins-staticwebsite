@@ -21,6 +21,11 @@ pipeline {
         INTERNAL_PORT = "${PARAM_INTERNAL_PORT}"              /*5000 by default*/
         EXTERNAL_PORT = "${PARAM_PORT_EXPOSED}"
         CONTAINER_IMAGE = "${DOCKERHUB_USR}/${IMAGE_NAME}:${IMAGE_TAG}"
+
+        EC2_PRIVATE_KEY = credentials('private_key')
+        SSH_USER = "ubuntu"
+        STAGING_IP = "35.174.106.205"
+        PROD_IP = "35.174.106.205"
     }
     agent none
     stages {
@@ -79,31 +84,50 @@ pipeline {
                 }
             }
         }
-        stage('STAGING - Deploy app') {
+        // stage('STAGING - Deploy app') {
+        //     agent any
+        //     steps {
+        //         script {
+        //             sh """
+        //                 echo  {\\"your_name\\":\\"${APP_NAME}\\",\\"container_image\\":\\"${CONTAINER_IMAGE}\\", \\"external_port\\":\\"${EXTERNAL_PORT}\\", \\"internal_port\\":\\"${INTERNAL_PORT}\\"}  > data.json 
+        //                 curl -k -v -X POST http://${STG_API_ENDPOINT}/staging -H 'Content-Type: application/json'  --data-binary @data.json  2>&1 | grep 200
+        //             """
+        //         }
+        //     }
+        // }
+
+        // stage('PROD - Deploy app') {
+        //     when {
+        //         expression { GIT_BRANCH == 'origin/master' }
+        //     }
+        //     agent any
+        //     steps {
+        //         script {
+        //         sh """
+        //             echo  {\\"your_name\\":\\"${APP_NAME}\\",\\"container_image\\":\\"${CONTAINER_IMAGE}\\", \\"external_port\\":\\"${EXTERNAL_PORT}\\", \\"internal_port\\":\\"${INTERNAL_PORT}\\"}  > data.json 
+        //             curl -k -v -X POST http://${PROD_API_ENDPOINT}/prod -H 'Content-Type: application/json'  --data-binary @data.json  2>&1 | grep 200
+        //         """
+        //         }
+        //     }
+        // }
+
+        stage('STAGING - Deploy on EC2') {
             agent any
             steps {
                 script {
-                    sh """
-                        echo  {\\"your_name\\":\\"${APP_NAME}\\",\\"container_image\\":\\"${CONTAINER_IMAGE}\\", \\"external_port\\":\\"${EXTERNAL_PORT}\\", \\"internal_port\\":\\"${INTERNAL_PORT}\\"}  > data.json 
-                        curl -k -v -X POST http://${STG_API_ENDPOINT}/staging -H 'Content-Type: application/json'  --data-binary @data.json  2>&1 | grep 200
-                    """
+                    sh '''
+                        echo "Connecting to the staging EC2 instance and deploying the container"
+                        ssh -o StrictHostKeyChecking=no -i $EC2_PRIVATE_KEY $SSH_USER@<$STAGING_IP> << EOF
+                            docker pull $CONTAINER_IMAGE
+                            docker stop $IMAGE_NAME || true
+                            docker rm $IMAGE_NAME || true
+                            docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
+                        EOF
+                    '''
                 }
             }
         }
-        stage('PROD - Deploy app') {
-            when {
-                expression { GIT_BRANCH == 'origin/master' }
-            }
-            agent any
-            steps {
-                script {
-                sh """
-                    echo  {\\"your_name\\":\\"${APP_NAME}\\",\\"container_image\\":\\"${CONTAINER_IMAGE}\\", \\"external_port\\":\\"${EXTERNAL_PORT}\\", \\"internal_port\\":\\"${INTERNAL_PORT}\\"}  > data.json 
-                    curl -k -v -X POST http://${PROD_API_ENDPOINT}/prod -H 'Content-Type: application/json'  --data-binary @data.json  2>&1 | grep 200
-                """
-                }
-            }
-        }
+
     }
   post {
     always {
