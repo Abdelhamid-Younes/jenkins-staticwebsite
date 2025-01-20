@@ -22,7 +22,7 @@ pipeline {
         EXTERNAL_PORT = "${PARAM_PORT_EXPOSED}"
         CONTAINER_IMAGE = "${DOCKERHUB_USR}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-        EC2_PRIVATE_KEY = credentials('private_key')
+        AWS_PRIVATE_KEY = credentials('private_key')
         SSH_USER = "ubuntu"
         STAGING_IP = "35.174.106.205"
         PROD_IP = "35.174.106.205"
@@ -116,8 +116,12 @@ pipeline {
             steps {
                 script {
                     sh '''
+                        echo "Configuring AWS private key"
+                        cp $AWS_PRIVATE_KEY devops-hamid.pem
+                        chmod 600 devops-hamid.pem
+
                         echo "Connecting to the staging EC2 instance and deploying the container"
-                        ssh -o StrictHostKeyChecking=no -i $EC2_PRIVATE_KEY $SSH_USER@$STAGING_IP \
+                        ssh -o StrictHostKeyChecking=no -i devops-hamid.pem $SSH_USER@$STAGING_IP \
                             docker pull $CONTAINER_IMAGE; \
                             docker stop $IMAGE_NAME || true; \
                             docker rm $IMAGE_NAME || true; \
