@@ -145,14 +145,13 @@ pipeline {
                             echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
                             ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG"
                             
-                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker stop $IMAGE_NAME || echo 'No container is running'"
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker stop $IMAGE_NAME || true"
                             ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker rm $IMAGE_NAME || echo 'All containers are deleted'"                            
                             sleep 15
 
                             ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT  ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG"
 
-                            #curl http://$STAGING_IP | grep -i "Domension"
-                            curl http://$STAGING_IP | grep -i "Dimension"
+                            curl http://$STAGING_IP:$EXTERNAL_PORT | grep -i "Dimension"
                         '''
                     }
                 }
