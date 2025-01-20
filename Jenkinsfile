@@ -125,6 +125,7 @@ pipeline {
 
                         echo "Connecting to the staging EC2 instance and deploying the container"
                         ssh -o StrictHostKeyChecking=no -i devops-hamid.pem $SSH_USER@$STAGING_IP \
+                            whoami; \
                             docker pull $CONTAINER_IMAGE; \
                             docker stop $IMAGE_NAME || true; \
                             docker rm $IMAGE_NAME || true; \
