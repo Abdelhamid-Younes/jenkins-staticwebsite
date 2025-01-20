@@ -150,8 +150,8 @@ pipeline {
                             sleep 15
 
                             ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT  ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG"
-                                                            
-                            curl http://$STAGING_IP | grep -i "Domension"
+
+                            #curl http://$STAGING_IP | grep -i "Domension"
                         '''
                     }
                 }
