@@ -26,63 +26,63 @@ pipeline {
         STAGING_IP = "35.174.106.205"
         PROD_IP = "35.174.106.205"
     }
-    agent none
+    agent any
     stages {
-        stage('Build image') {
-            agent any
-            steps {
-                script {
-                    sh 'docker build -t ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG .'
-                }
-            }
-        }
-        stage('Run container based on built image'){
-            agent any
-            steps {
-                script{
-                    sh '''
-                        echo "Cleaning existing container if exists"
-                        docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
-                        docker run --network jenkins_jenkins_network --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-                    '''
-                }
-            }
-        }
-        stage('Test image') {
-            agent any
-            steps{
-                script {
-                    sh 'sleep 5'
-                    sh 'curl -k $IMAGE_NAME:$APP_EXPOSED_PORT | grep -i "Dimension"'
-                    sh 'if [ $? -eq 0 ]; then echo "Acceptance test succeeded"; fi'  // // Verify the test
-                }
-            }
-        }
-        stage('Clean container') {
-            agent any
-            steps{
-                script {
-                    sh '''
-                        docker stop $IMAGE_NAME
-                        docker rm $IMAGE_NAME
-                    '''
-                }
-            }
-        }
-        stage('Login and Push Image on Docker Hub') {
-            when{
-                expression {GIT_BRANCH == 'origin/master'}
-            }
-            agent any
-            steps{
-                script {
-                    sh '''
-                        echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
-                        docker push $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
-                    '''
-                }
-            }
-        }
+        // stage('Build image') {
+        //     agent any
+        //     steps {
+        //         script {
+        //             sh 'docker build -t ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG .'
+        //         }
+        //     }
+        // }
+        // stage('Run container based on built image'){
+        //     agent any
+        //     steps {
+        //         script{
+        //             sh '''
+        //                 echo "Cleaning existing container if exists"
+        //                 docker ps -a | grep -i $IMAGE_NAME && docker rm -f $IMAGE_NAME
+        //                 docker run --network jenkins_jenkins_network --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
+        //             '''
+        //         }
+        //     }
+        // }
+        // stage('Test image') {
+        //     agent any
+        //     steps{
+        //         script {
+        //             sh 'sleep 5'
+        //             sh 'curl -k $IMAGE_NAME:$APP_EXPOSED_PORT | grep -i "Dimension"'
+        //             sh 'if [ $? -eq 0 ]; then echo "Acceptance test succeeded"; fi'  // // Verify the test
+        //         }
+        //     }
+        // }
+        // stage('Clean container') {
+        //     agent any
+        //     steps{
+        //         script {
+        //             sh '''
+        //                 docker stop $IMAGE_NAME
+        //                 docker rm $IMAGE_NAME
+        //             '''
+        //         }
+        //     }
+        // }
+        // stage('Login and Push Image on Docker Hub') {
+        //     when{
+        //         expression {GIT_BRANCH == 'origin/master'}
+        //     }
+        //     agent any
+        //     steps{
+        //         script {
+        //             sh '''
+        //                 echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
+        //                 docker push $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
+        //             '''
+        //         }
+        //     }
+        // }
         // stage('STAGING - Deploy app') {
         //     agent any
         //     steps {
@@ -137,22 +137,24 @@ pipeline {
         // }
 
         stage('STAGING - Deploy on EC2') {
-            agent any
             steps {
-                sshagent(credentials: ['private_key']) {
-                    sh '''
-                        echo "Connecting to the staging EC2 instance"
-                        ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP
+                script {
+                    sshagent(credentials: ['private_key']) {
+                        sh '''
+                            echo "Connecting to the staging EC2 instance"
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP
 
-                        # Pull the Docker image and run the container
-                        echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
-                        docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
-                        docker stop $IMAGE_NAME || echo 'No container in running'
-                        docker rm $IMAGE_NAME || echo 'All containers are deleted'
-                        docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
-                        sleep 10
-                    '''
+                            # Pull the Docker image and run the container
+                            echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
+                            docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
+                            docker stop $IMAGE_NAME || echo 'No container in running'
+                            docker rm $IMAGE_NAME || echo 'All containers are deleted'
+                            docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
+                            sleep 10
+                        '''
+                    }
                 }
+
             }
         }
 
