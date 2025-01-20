@@ -117,12 +117,11 @@ pipeline {
                 script {
                     sh '''
                         echo "Connecting to the staging EC2 instance and deploying the container"
-                        ssh -o StrictHostKeyChecking=no -i $EC2_PRIVATE_KEY $SSH_USER@<$STAGING_IP> << EOF
-                            docker pull $CONTAINER_IMAGE
-                            docker stop $IMAGE_NAME || true
-                            docker rm $IMAGE_NAME || true
+                        ssh -o StrictHostKeyChecking=no -i $EC2_PRIVATE_KEY $SSH_USER@$STAGING_IP \
+                            docker pull $CONTAINER_IMAGE; \
+                            docker stop $IMAGE_NAME || true; \
+                            docker rm $IMAGE_NAME || true; \
                             docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
-                        EOF
                     '''
                 }
             }
