@@ -150,7 +150,7 @@ pipeline {
                             docker stop $IMAGE_NAME || echo 'No container in running'
                             docker rm $IMAGE_NAME || echo 'All containers are deleted'
                             docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
-                            sleep 10
+                            sleep 20
                         '''
                     }
                 }
