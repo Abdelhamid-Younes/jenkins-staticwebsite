@@ -22,7 +22,7 @@ pipeline {
         EXTERNAL_PORT = "${PARAM_PORT_EXPOSED}"
         CONTAINER_IMAGE = "${DOCKERHUB_USR}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-        //EC2_PRIVATE_KEY = credentials('private_key')
+        EC2_PRIVATE_KEY = credentials('private_key')
         SSH_USER = "ubuntu"
         STAGING_IP = "35.174.106.205"
         PROD_IP = "35.174.106.205"
