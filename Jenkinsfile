@@ -149,7 +149,10 @@ pipeline {
                             docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
                             docker stop $IMAGE_NAME || echo 'No container in running'
                             docker rm $IMAGE_NAME || echo 'All containers are deleted'
-                            docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
+                            sleep 30
+
+                            docker run --name $IMAGE_NAME -d -p $APP_EXPOSED_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
+                            #docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
                             sleep 20
                         '''
                     }
