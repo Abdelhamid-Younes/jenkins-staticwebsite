@@ -146,7 +146,7 @@ pipeline {
                             ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG"
                             
                             ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker stop $IMAGE_NAME || true"
-                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker rm $IMAGE_NAME || echo 'All containers are deleted'"                            
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker rm $IMAGE_NAME || true"                            
                             sleep 15
 
                             ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT  ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG"
