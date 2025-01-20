@@ -23,8 +23,8 @@ pipeline {
         CONTAINER_IMAGE = "${DOCKERHUB_USR}/${IMAGE_NAME}:${IMAGE_TAG}"
 
         SSH_USER = "ubuntu"
-        STAGING_IP = "35.174.106.205"
-        PROD_IP = "35.174.106.205"
+        STAGING_IP = "44.201.180.81"
+        PROD_IP = "44.201.180.81"
     }
     agent any
     stages {
