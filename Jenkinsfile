@@ -110,31 +110,53 @@ pipeline {
         //     }
         // }
 
+        // stage('STAGING - Deploy on EC2') {
+        //     agent any
+
+        //     environment {
+        //         AWS_PRIVATE_KEY = credentials('private_key')
+        //     }
+        //     steps {
+        //         script {
+        //             sh '''
+        //                 echo "Configuring AWS private key"
+        //                 cp $AWS_PRIVATE_KEY devops-hamid.pem
+        //                 chmod 600 devops-hamid.pem
+
+        //                 echo "Connecting to the staging EC2 instance and deploying the container"
+        //                 ssh -o StrictHostKeyChecking=no -i devops-hamid.pem $SSH_USER@$STAGING_IP \
+        //                     echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin; \
+        //                     docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG; \
+        //                     docker stop $IMAGE_NAME || echo 'No container in running'; \
+        //                     docker rm $IMAGE_NAME || echo 'All containers are deleted'; \
+        //                     docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE; \
+        //                     sleep 10
+        //             '''
+        //         }
+        //     }
+        // }
+
         stage('STAGING - Deploy on EC2') {
             agent any
-
-            environment {
-                AWS_PRIVATE_KEY = credentials('private_key')
-            }
             steps {
-                script {
+                sshagent(credentials: ['private_key']) {
                     sh '''
-                        echo "Configuring AWS private key"
-                        cp $AWS_PRIVATE_KEY devops-hamid.pem
-                        chmod 600 devops-hamid.pem
+                        echo "Connecting to the staging EC2 instance"
+                        ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP
 
-                        echo "Connecting to the staging EC2 instance and deploying the container"
-                        ssh -o StrictHostKeyChecking=no -i devops-hamid.pem $SSH_USER@$STAGING_IP \
-                            echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin; \
-                            docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG; \
-                            docker stop $IMAGE_NAME || echo 'All topped'; \
-                            docker rm $IMAGE_NAME || echo 'All deleted'; \
-                            docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE; \
-                            sleep 30
+                        # Pull the Docker image and run the container
+                        echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
+                        docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
+                        docker stop $IMAGE_NAME || echo 'No container in running'
+                        docker rm $IMAGE_NAME || echo 'All containers are deleted'
+                        docker run --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT $CONTAINER_IMAGE
+                        sleep 10
                     '''
                 }
             }
         }
+
+
 
     }
   post {
