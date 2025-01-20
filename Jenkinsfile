@@ -149,10 +149,10 @@ pipeline {
                             ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker rm $IMAGE_NAME || echo 'All containers are deleted'"                            
                             sleep 30
 
-                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker run --rm --name $IMAGE_NAME -d -p 80:80 ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG"
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT  ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG"
                             sleep 10
                                 
-                            curl -I http://172.17.0.2
+                            curl -I http://STAGING_IP | grep -i "Domension"
                         '''
                     }
                 }
