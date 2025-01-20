@@ -158,13 +158,13 @@ pipeline {
                             echo "Connecting to the staging EC2 instance"
                             echo $DOCKERHUB_PSW | docker login -u $DOCKERHUB_USR --password-stdin
                             
-                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP << EOF
+                            ssh -o StrictHostKeyChecking=no $SSH_USER@$STAGING_IP "
                                 docker pull $DOCKERHUB_USR/$IMAGE_NAME:$IMAGE_TAG
                                 docker stop $IMAGE_NAME || true
                                 docker rm $IMAGE_NAME || true
                                 sleep 15
                                 docker run --rm --name $IMAGE_NAME -d -p $EXTERNAL_PORT:$INTERNAL_PORT ${DOCKERHUB_USR}/$IMAGE_NAME:$IMAGE_TAG
-                            EOF
+                            "
                             
                             curl http://$STAGING_IP:$EXTERNAL_PORT | grep -i "Dimension"
                         '''
