@@ -22,7 +22,6 @@ pipeline {
         EXTERNAL_PORT = "${PARAM_PORT_EXPOSED}"
         CONTAINER_IMAGE = "${DOCKERHUB_USR}/${IMAGE_NAME}:${IMAGE_TAG}"
 
-        AWS_PRIVATE_KEY = credentials('private_key')
         SSH_USER = "ubuntu"
         STAGING_IP = "35.174.106.205"
         PROD_IP = "35.174.106.205"
@@ -113,6 +112,10 @@ pipeline {
 
         stage('STAGING - Deploy on EC2') {
             agent any
+
+            environment {
+                AWS_PRIVATE_KEY = credentials('private_key')
+            }
             steps {
                 script {
                     sh '''
