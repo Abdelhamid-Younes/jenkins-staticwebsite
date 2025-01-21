@@ -84,4 +84,16 @@ The pipeline uses the following environment variables:
 ![](images/homepage_prod.png)
 
 
+## Notifications
+
+The pipeline sends build status notifications via Slack (requires `slackNotifier` configuration).
+
+![](images/slack.png)
+
+---
+
+**Author**: Abdelhamid Younes  
+For questions or feedback, feel free to contact me.
+
+
 
