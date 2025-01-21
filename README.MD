@@ -26,3 +26,18 @@ This project automates the CI/CD process for a Dockerized web application, lever
 - AWS EC2 instances for staging and production with Docker installed.
 
 ![](images/ec2_instance.png)
+
+## Environment Variables
+
+The pipeline uses the following environment variables:
+
+| Variable         | Description                          | Example Value        |
+|-------------------|--------------------------------------|----------------------|
+| `IMAGE_NAME`      | Name of the Docker image            | `staticwebsite`      |
+| `APP_NAME`        | Application name                   | `younesabdh`         |
+| `IMAGE_TAG`       | Image tag (e.g., version)          | `latest`             |
+| `APP_EXPOSED_PORT`| External port for the app          | `80`                 |
+| `INTERNAL_PORT`   | Internal app port                  | `5000`               |
+| `STAGING_IP`      | Staging EC2 instance IP address    | `3.88.8.175`         |
+| `PROD_IP`         | Production EC2 instance IP address | `98.82.5.111`        |
+
