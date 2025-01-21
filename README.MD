@@ -61,7 +61,7 @@ The pipeline uses the following environment variables:
 ![](images/webhook.png)
 
 2. **Run the Pipeline**:
-   - Trigger the pipeline from Jenkins by checking the option `GitHub hook trigger for GITScm polling`, and crteating a push event on github projet repos 
+   - Trigger the pipeline from Jenkins by checking the option `GitHub hook trigger for GITScm polling`, and creating a push event on github projet repos 
 
    - Monitor the pipeline stages for successful execution.
 
