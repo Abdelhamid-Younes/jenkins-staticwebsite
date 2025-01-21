@@ -41,3 +41,31 @@ The pipeline uses the following environment variables:
 | `STAGING_IP`      | Staging EC2 instance IP address    | `3.88.8.175`         |
 | `PROD_IP`         | Production EC2 instance IP address | `98.82.5.111`        |
 
+## How to Use
+
+1. **Set Up Jenkins Pipeline**:
+   - Import the shared library in Jenkins.
+
+![](images/shared_library.png)
+
+   - Add the slack channel to Jenkins configuration
+
+  ![](images/slack.png)
+
+   - Configure the required credentials (`dockerhub`, `private_key`).
+
+![](images/credentials.png)
+
+2. **Run the Pipeline**:
+   - Trigger the pipeline from Jenkins by checking the option `GitHub hook trigger for GITScm polling`
+   - Configure the webhook from github repository:
+
+![](images/webhook.png)
+
+   - Monitor the pipeline stages for successful execution.
+
+3. **Deployment**:
+   - Confirm deployment on production during the manual approval stage.
+
+
+
