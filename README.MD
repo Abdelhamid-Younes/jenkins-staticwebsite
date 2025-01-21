@@ -2,7 +2,7 @@
 This Jenkins pipeline builds, tests, and deploys a Dockerized application. It uses a multistage process to automate building a Docker image, running tests, and deploying the app to staging and production environments.
 
 ## Prerequisites
-
+ 
 ### Local Machine Setup:
 - **Git**: Ensure that Git is installed on your local machine.
 - **Ngrok**: To make the Jenkins server accessible publicly for GitHub webhook integration, use Ngrok to create a tunnel and expose Jenkins over the internet with a public IP address.
