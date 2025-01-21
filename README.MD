@@ -50,22 +50,38 @@ The pipeline uses the following environment variables:
 
    - Add the slack channel to Jenkins configuration
 
-  ![](images/slack.png)
+  ![](images/slack_jenkins.png)
 
    - Configure the required credentials (`dockerhub`, `private_key`).
 
 ![](images/credentials.png)
 
-2. **Run the Pipeline**:
-   - Trigger the pipeline from Jenkins by checking the option `GitHub hook trigger for GITScm polling`
-   - Configure the webhook from github repository:
+   - Configure the webhook from github repository (I have used Ngrok to provide a public IP for jenkins server):
 
 ![](images/webhook.png)
 
+2. **Run the Pipeline**:
+   - Trigger the pipeline from Jenkins by checking the option `GitHub hook trigger for GITScm polling`, and crteating a push event on github projet repos 
+
    - Monitor the pipeline stages for successful execution.
 
-3. **Deployment**:
    - Confirm deployment on production during the manual approval stage.
+
+![](images/pipeline1.png)
+
+![](images/pipeline2.png)
+
+3. **Deployment**:
+
+  - Check the results by accessing the application from the browser:
+
+    - On staging server:
+
+![](images/homepage_staging.png)
+
+    - On Prod server:
+
+![](images/homepage_prod.png)
 
 
 
