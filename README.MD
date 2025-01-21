@@ -1,4 +1,4 @@
-# Jenkins Pipeline for Dockerized Application Deployment
+# Jenkins Pipeline for staticwebsite application
 
 This project automates the CI/CD process for a Dockerized web application, leveraging Jenkins and deploying on AWS EC2 instances. The pipeline includes stages for building, testing, and deploying the application in both staging and production environments.
 
